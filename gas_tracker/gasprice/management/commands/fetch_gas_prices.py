@@ -6,7 +6,7 @@ from web3 import Web3
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env
+# Load environment variables from .envm
 load_dotenv()
 
 # Get the Alchemy API key from the environment variables
