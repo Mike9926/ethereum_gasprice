@@ -1,0 +1,38 @@
+{% extends "gas_prices/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <!-- Create a jumbotron with Bootstrap -->
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Web3 Gas Tracker</h1>
+        <p class="lead">This is a web3 app that fetches and stores gas prices from the Ethereum network using the Alchemy API and the Web3 library.</p>
+        <hr class="my-4">
+        <p>The latest gas price is {{ gas_price }} Wei, with a transaction speed of {{ transaction_speed }}.</p>
+        <p>This data was updated on {{ timestamp }}.</p>
+        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </div>
+    <!-- Create a table with Bootstrap -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Gas Price</th>
+                <th scope="col">Transaction Speed</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the gas price objects using Django template tag -->
+            {% for gas_price in gas_prices %}
+            <tr>
+                <th scope="row">{{ gas_price.id }}</th>
+                <td>{{ gas_price.gas_price }}</td>
+                <td>{{ gas_price.transaction_speed }}</td>
+                <td>{{ gas_price.timestamp }}</td>
+                <!-- Create a link to the gas price detail page using Django template tag -->
+                <td><a href="{% url 'gas_price_detail' gas_price.id %}">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
