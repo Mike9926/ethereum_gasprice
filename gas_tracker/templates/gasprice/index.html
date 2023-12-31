@@ -46,7 +46,9 @@
         <hr class="my-4">
         <p>The latest gas price is {{ latest_gas_price.gas_price }} Wei, with a transaction speed of {{ latest_gas_price.transaction_speed }}.</p>
         <p>This data was updated on {{ latest_gas_price.timestamp }}.</p>
-        <a class="btn btn-primary btn-lg fun-animation" href="#" role="button">Learn more</a>
+       <p>To fetche current gas prices, click the button below, then refresh your web page.</p>
+       <!-- Add the button to fetch gas prices -->
+       <button id="refresh-button" class="btn btn-secondary btn-lg fun-animation">Fetch Current Price</button>
     </div>
     <!-- Create a table with Bootstrap -->
     <table class="table table-striped">
@@ -73,8 +75,6 @@
             {% endfor %}
         </tbody>
     </table>
-    <!-- Add a button element with an id attribute -->
-    <button id="refresh-button" class="btn btn-secondary btn-lg fun-animation">Refresh</button>
     <!-- Load Bootstrap JS and jQuery from CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"></script>
