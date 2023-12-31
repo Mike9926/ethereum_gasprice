@@ -1,1 +1,120 @@
 {% extends "gasprice/base.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <!-- Add some style for the web3 animation -->
+    <style>
+        /* Define the keyframes for the subtle animation */
+        @keyframes subtle-move {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(10px, 10px);
+            }
+        }
+        /* Style the web3 logo */
+        .web3-logo {
+            width: 50px; /* Adjust the size as needed */
+            height: 50px; /* Adjust the size as needed */
+            margin: 0 auto;
+            animation: subtle-move 5s alternate infinite; /* Apply the subtle movement animation */
+        }
+        /* Style the web3 title */
+        .web3-title-container {
+            text-align: center;
+        }
+        .web3-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 20px; /* Add margin for better spacing */
+        }
+        /* Add a class for more fun animation */
+        
+    </style>
+    <!-- Create a jumbotron with Bootstrap -->
+    <div class="jumbotron">
+        <!-- Add the web3 logo and title -->
+        <div class="web3-title-container">
+    
+            <div class="web3-title">
+                Ethereum Gas Price Tracker
+            </div>
+        </div>
+        <p class="lead">This is a web3 app that fetches and stores gas prices from the Ethereum network using the Alchemy API and the Web3 library.</p>
+        <hr class="my-4">
+        <p>The latest gas price is {{ latest_gas_price.gas_price }} Wei, with a transaction speed of {{ latest_gas_price.transaction_speed }}.</p>
+        <p>This data was updated on {{ latest_gas_price.timestamp }}.</p>
+        <a class="btn btn-primary btn-lg fun-animation" href="#" role="button">Learn more</a>
+    </div>
+    <!-- Create a table with Bootstrap -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Gas Price</th>
+                <th scope="col">Transaction Speed</th>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the gas price objects using Django template tag -->
+            {% for gas_price in gas_prices %}
+            <tr>
+                <th scope="row">{{ gas_price.id }}</th>
+                <td>{{ gas_price.gas_price }}</td>
+                <td>{{ gas_price.transaction_speed }}</td>
+                <td>{{ gas_price.timestamp }}</td>
+                <!-- Create a link to the gas price detail page using Django template tag -->
+                <td><a href="{% url 'gas_price_detail' gas_price.id %}" class="fun-animation">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Add a button element with an id attribute -->
+    <button id="refresh-button" class="btn btn-secondary btn-lg fun-animation">Refresh</button>
+    <!-- Load Bootstrap JS and jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"></script>
+    <!-- Load web3-light.js from static folder -->
+    <script src="/static/poll/web3-light.js"></script>
+    <!-- Add a script element with the JavaScript code -->
+    <script>
+        document.getElementById('refresh-button').addEventListener('click', function() {
+          // Get the CSRF token from the cookie
+          var csrftoken = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken=')).split('=')[1];
+          // Add the method and headers options to the fetch call
+          fetch('/update-gas-price/', {
+            method: 'POST', // Set the method to POST
+            headers: {
+              'X-CSRFToken': csrftoken, // Set the X-CSRFToken header
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+              // Update the top part of the page with the new data
+              document.querySelector('.lead p').innerText = `The latest gas price is ${data.gas_price} Wei, with a transaction speed of ${data.transaction_speed}.`;
+              document.querySelector('.lead p + p').innerText = `This data was updated on ${data.timestamp}.`;
+              // Update the table with the new data
+              // Select all the table rows except the header row
+              var rows = document.querySelectorAll('table tr:not(:first-child)');
+              // Loop through the rows and update the gas price, transaction speed, and timestamp columns
+              for (var i = 0; i < rows.length; i++) {
+                  var row = rows[i];
+                  // The gas price column is the second column
+                  var gasPriceCell = row.cells[1];
+                  gasPriceCell.innerText = data.gas_price;
+                  // The transaction speed column is the third column
+                  var transactionSpeedCell = row.cells[2];
+                  transactionSpeedCell.innerText = data.transaction_speed;
+                  // The timestamp column is the fourth column
+                  var timestampCell = row.cells[3];
+                  timestampCell.innerText = data.timestamp;
+              }
+          })
+          .catch(error => console.error(error));
+        });
+    </script>
+{% endblock %}
